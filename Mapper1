@@ -1,1 +1,30 @@
-DSSfd
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class MapperAutores extends
+    Mapper<LongWritable, Text, Text, IntWritable> {
+
+  private static Text keyWord = new Text();
+  private final static IntWritable cuenta = new IntWritable(1);
+
+  @Override
+  protected void map(LongWritable key, Text textLine, Context context)
+      throws IOException, InterruptedException {
+
+    int i = 0;
+    for (String word : textLine.toString().split(":::")) {
+      i++;
+      if (i == 2) {
+
+        for (String autor : word.toString().split("::")) {
+          keyWord.set(autor);
+          context.write(keyWord, cuenta);
+        }
+      }
+    }
+  }
+}
